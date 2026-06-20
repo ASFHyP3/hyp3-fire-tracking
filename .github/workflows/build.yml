@@ -1,0 +1,93 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  HYP3_REGISTRY: 761639967505.dkr.ecr.us-west-2.amazonaws.com
+  AWS_REGION: us-west-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AKFIRE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AKFIRE_AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  call-version-info-workflow:
+    # Docs: https://github.com/ASFHyP3/actions
+    uses: ASFHyP3/actions/.github/workflows/reusable-version-info.yml@v0.21.1
+    permissions:
+      contents: read
+    with:
+      python_version: '3.10'
+
+  dockerize:
+    needs: call-version-info-workflow
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ needs.call-version-info-workflow.outputs.version_tag }}
+      cancel-in-progress: true
+    env:
+      SDIST_VERSION: ${{ needs.call-version-info-workflow.outputs.version_tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: set environment variables
+        run: |
+          git fetch origin +refs/tags/*:refs/tags/*
+          echo "CI_JOB_TIMESTAMP=$(date --utc --rfc-3339=seconds)" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Fetch GAMMA
+        run: |
+          aws s3 cp s3://fire-tracking/AK_fire-main.zip .
+          unzip AK_fire-main.zip
+
+      - name: Build, tag, and push image to Amazon ECR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          no-cache: true
+          push: true
+          tags: |
+            ${{ env.HYP3_REGISTRY }}/${{ github.event.repository.name }}:${{ env.SDIST_VERSION }}
+          labels: |
+            org.opencontainers.image.created=${{ env.CI_JOB_TIMESTAMP }}
+            org.opencontainers.image.version=${{ env.SDIST_VERSION }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Add test tag
+        if: ${{ github.event_name != 'pull_request' && contains(env.SDIST_VERSION, '.dev') }}
+        uses: akhilerm/tag-push-action@v2.2.0
+        with:
+          src: ${{ env.HYP3_REGISTRY }}/${{ github.event.repository.name }}:${{ env.SDIST_VERSION }}
+          dst: ${{ env.HYP3_REGISTRY }}/${{ github.event.repository.name }}:test
+
+      - name: Add latest tag
+        if: ${{ github.event_name != 'pull_request' && ! contains(env.SDIST_VERSION, '.dev') }}
+        uses: akhilerm/tag-push-action@v2.2.0
+        with:
+          src: ${{ env.HYP3_REGISTRY }}/${{ github.event.repository.name }}:${{ env.SDIST_VERSION }}
+          dst: ${{ env.HYP3_REGISTRY }}/${{ github.event.repository.name }}:latest
+
+      - name: Logout of Amazon ECR
+        if: always()
+        run: docker logout ${HYP3_REGISTRY}
