@@ -25,11 +25,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip vim && \
 ARG CONDA_UID=1000
 ARG CONDA_GID=1000
 
-COPY AK_fire-main /hyp3-fire-tracking/
-COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/paths/
-
-ENV PROC_HOME=/AK_fire-main/fire-tracking
-
 RUN groupadd -g "${CONDA_GID}" --system conda && \
     useradd -l -u "${CONDA_UID}" -g "${CONDA_GID}" --system -d /home/conda -m  -s /bin/bash conda && \
     chown -R conda:conda /opt && \
@@ -48,6 +43,11 @@ RUN mamba env create -f /hyp3-fire-tracking/environment.yml && \
     conda activate hyp3-fire-tracking && \
     sed -i 's/conda activate base/conda activate hyp3-fire-tracking/g' /home/conda/.profile && \
     python -m pip install --no-cache-dir /hyp3-fire-tracking
+
+COPY AK_fire-main /hyp3-fire-tracking/
+COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/paths/
+
+ENV PROC_HOME=/hyp3-fire-tracking/AK_fire-main/fire-tracking
 
 ENTRYPOINT ["/hyp3-fire-tracking/src/hyp3_fire_tracking/etc/entrypoint.sh"]
 CMD ["-h"]
