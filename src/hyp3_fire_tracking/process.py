@@ -61,8 +61,6 @@ def download_data(input_bucket: str, input_prefix: str, output: str = 'output') 
         ready = Path(f'{str(folder)}/READY.flag')
         ready.touch()
 
-    return Path(output)
-
 
 def process_fire_tracking(
     input_bucket: str,
