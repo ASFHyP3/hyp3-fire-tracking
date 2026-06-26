@@ -1,16 +1,17 @@
 """fire-tracking processing."""
 
-import boto3
-import botocore
 import datetime as dt
 import logging
 import os
 import shutil
 from pathlib import Path
 
+import boto3
+import botocore
 from tqdm.auto import tqdm
 
 from hyp3_fire_tracking import utils
+
 
 log = logging.getLogger(__name__)
 
@@ -20,9 +21,9 @@ def get_sat(suffix: str) -> str:
 
     Args:
         suffix: Bucket with fire detection text files.
-        
+
     Returns:
-        sat: corresponding satellite 
+        sat: corresponding satellite
     """
     if suffix == 'j01':
         return 'n20'
@@ -40,6 +41,7 @@ def download_data(input_bucket: str, input_prefix: str, output: str = 'output') 
     Args:
         input_bucket: Bucket with fire detection text files.
         input_prefix: Prefix with fire detection text files.
+        output: File path for the output product.
     """
     s3 = boto3.resource('s3', config=boto3.session.Config(signature_version=botocore.UNSIGNED))
     buck = s3.Bucket(input_bucket)
@@ -62,19 +64,24 @@ def download_data(input_bucket: str, input_prefix: str, output: str = 'output') 
     return Path(output)
 
 
-def process_fire_tracking(input_bucket: str, input_prefix: str, work_dir: Path | None = None,) -> Path:
+def process_fire_tracking(
+    input_bucket: str,
+    input_prefix: str,
+    work_dir: Path | None = None,
+) -> Path:
     """Draw fire polygon from fire detections.
 
     Args:
         input_bucket: Input bucket
         input_prefix: Input prefix
+        work_dir: File path for the output product
     """
     if work_dir is None:
         work_dir = Path('output')
 
-    log.debug(f'Downloading...')
-    #download_data(input_bucket, input_prefix, output = str(work_dir))
-    log.debug(f'Drawing polygon')
+    log.debug('Downloading...')
+    # download_data(input_bucket, input_prefix, output = str(work_dir))
+    log.debug('Drawing polygon')
     utils.call_fire_module('run_algorithm_watcher.py', args=['orchestration.watch_one_shot=true'], work_dir=work_dir)
-    product_file = shutil.make_archive("output", "zip", str(work_dir))
+    product_file = shutil.make_archive('output', 'zip', str(work_dir))
     return Path(product_file)

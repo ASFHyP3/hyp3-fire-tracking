@@ -1,3 +1,5 @@
+"""utils for fire-tracking."""
+
 import os
 import subprocess
 from pathlib import Path
@@ -15,7 +17,7 @@ def get_proc_home() -> Path:
     return Path(proc_home)
 
 
-def call_fire_module(local_name, args: list = [], work_dir: Path | None = None) -> None:
+def call_fire_module(local_name: str, args: list = [], work_dir: Path | None = None) -> None:
     """Call a Stanford Processor modules (via subprocess) with the given arguments.
 
     Args:
@@ -30,4 +32,4 @@ def call_fire_module(local_name, args: list = [], work_dir: Path | None = None) 
     script = proc_home / local_name
     args = [str(x) for x in args]
     print(f'Calling {local_name} {" ".join(args)} in directory {work_dir}')
-    subprocess.run(['python',str(script), *args], cwd=work_dir, check=True)
+    subprocess.run(['python', str(script), *args], cwd=work_dir, check=True)
