@@ -1,0 +1,33 @@
+# ============================================================================
+# Paths: Alaska 2025 fire season
+# ============================================================================
+# All inputs come from the VIIRS download structure.
+# All outputs go to a separate out_root — never mixed with source data.
+#
+# To port to a new machine, only change raw_root and output_root below.
+# Every other path is derived automatically.
+# ============================================================================
+
+# --- Root variables (only these two need changing per machine) ---
+raw_root:    ./output
+output_root: ./output
+
+# --- Input ---
+# Source root: all VIIRS inputs live under this tree
+#   L2/{YYYY_MM_DD}/   — EFIRE hotspot NC files
+#   L1/{YYYY_MM_DD}/   — L1B H5 files
+#   false_color/{sat}/{YYYYMMDD}/{HHMM}/ — pre-composed false-color TIFs
+#   gridded/{sat}/{YYYYMMDD}/{HHMM}/     — individual band TIFs
+data_root: ${paths.raw_root}/data_sat/large/viirs/aws/alaska
+flat_dir:  ${paths.data_root}/L2/2025_07_04
+
+# --- Output root (separate from inputs) ---
+out_root: ${paths.output_root}/alaska_fire
+
+# --- Derived output paths (all under out_root) ---
+tracks_dir:            ${paths.out_root}/tracks
+persistent_tracks_dir: ${paths.out_root}/persistent_tracks
+state_dir:             ${paths.out_root}/state
+plots_dir:             ${paths.out_root}/plots
+grids_dir:             ${paths.out_root}/grids
+analysis_dir:          ${paths.out_root}/analysis

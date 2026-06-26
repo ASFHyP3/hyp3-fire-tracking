@@ -25,6 +25,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip vim && \
 ARG CONDA_UID=1000
 ARG CONDA_GID=1000
 
+COPY /hyp3-fire-tracking/src/hyp3-fire-tracking/data/alaska_2025.yaml AK_fire-main/fire-tracking/paths/
+COPY AK_fire-main /hyp3-fire-tracking/
+
+ENV PROC_HOME=/AK_fire-main/fire-tracking
+
 RUN groupadd -g "${CONDA_GID}" --system conda && \
     useradd -l -u "${CONDA_UID}" -g "${CONDA_GID}" --system -d /home/conda -m  -s /bin/bash conda && \
     chown -R conda:conda /opt && \
