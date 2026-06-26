@@ -16,7 +16,7 @@ def main() -> None:
 
     # TODO: Your arguments here
     parser.add_argument('--input-bucket', default='ak-fire-safe-data', help='Input bucket')
-    parser.add_argument('--input-prefix', default='nc', help='Input prefix')
+    parser.add_argument('--input-prefix', default='netcdf', help='Input prefix')
 
     args = parser.parse_args()
 
