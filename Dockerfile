@@ -26,6 +26,7 @@ ARG CONDA_UID=1000
 ARG CONDA_GID=1000
 
 COPY AK_fire-main /hyp3-fire-tracking/
+COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/paths/
 
 ENV PROC_HOME=/AK_fire-main/fire-tracking
 
@@ -41,8 +42,6 @@ SHELL ["/bin/bash", "-l", "-c"]
 WORKDIR /home/conda/
 
 COPY --chown=${CONDA_UID}:${CONDA_GID} . /hyp3-fire-tracking/
-
-COPY /hyp3-fire-tracking/src/hyp3_fire_tracking/data/alaska_2025.yaml AK_fire-main/fire-tracking/paths/
 
 RUN mamba env create -f /hyp3-fire-tracking/environment.yml && \
     conda clean -afy && \
