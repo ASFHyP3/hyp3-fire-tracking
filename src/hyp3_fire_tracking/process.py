@@ -76,7 +76,7 @@ def process_fire_tracking(
     """
     if work_dir is None:
         work_dir = Path('output')
-
+    work_dir.mkdir(parents=True, exist_ok=True)
     log.debug('Downloading...')
     # download_data(input_bucket, input_prefix, output = str(work_dir))
     log.debug('Drawing polygon')
