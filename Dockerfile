@@ -45,7 +45,7 @@ RUN mamba env create -f /hyp3-fire-tracking/environment.yml && \
     python -m pip install --no-cache-dir /hyp3-fire-tracking
 
 COPY AK_fire-main /hyp3-fire-tracking/
-COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/paths/
+COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/conf/paths/
 
 ENV PROC_HOME=/hyp3-fire-tracking/AK_fire-main/fire-tracking
 
