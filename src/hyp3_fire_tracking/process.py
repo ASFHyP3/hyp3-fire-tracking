@@ -78,7 +78,7 @@ def process_fire_tracking(
         work_dir = Path('output')
     work_dir.mkdir(parents=True, exist_ok=True)
     log.debug('Downloading...')
-    # download_data(input_bucket, input_prefix, output = str(work_dir))
+    download_data(input_bucket, input_prefix, output = str(work_dir))
     log.debug('Drawing polygon')
     utils.call_fire_module('run_algorithm_watcher.py', args=['orchestration.watch_one_shot=true'], work_dir=work_dir)
     product_file = shutil.make_archive('output', 'zip', str(work_dir))
