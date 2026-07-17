@@ -50,7 +50,9 @@ def download_data(input_bucket: str, input_prefix: str, output: str = 'output') 
         if '_' in filename:
             suffix = filename.split('_')[1]
             sat = get_sat(suffix)
-            start = dt.datetime.strptime('_'.join([filename.split('_')[2], filename.split('_')[3]]), 'd%Y%m%d_t%H%M%S%f')
+            start = dt.datetime.strptime(
+                '_'.join([filename.split('_')[2], filename.split('_')[3]]), 'd%Y%m%d_t%H%M%S%f'
+            )
             end = dt.datetime.strptime('_'.join([filename.split('_')[2], filename.split('_')[4]]), 'd%Y%m%d_e%H%M%S%f')
             sstart = start.strftime('%Y%m%d%H%M%S%f')
             send = end.strftime('%Y%m%d%H%M%S%f')
