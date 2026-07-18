@@ -6,22 +6,22 @@ from pathlib import Path
 
 
 def get_proc_home() -> Path:
-    """Get the PROC_HOME environment variable, which is the location of the SRG modules.
+    """Get the PROC_HOME environment variable, which is the location of the fire-tracking module.
 
     Returns:
         Path to the PROC_HOME directory
     """
     proc_home = os.environ.get('PROC_HOME', None)
     if proc_home is None:
-        raise ValueError('PROC_HOME environment variable is not set. Location of Stanford modules is unknown.')
+        raise ValueError('PROC_HOME environment variable is not set. Location of fire-tracking module is unknown.')
     return Path(proc_home)
 
 
 def call_fire_module(local_name: str, args: list = [], work_dir: Path | None = None) -> None:
-    """Call a Stanford Processor modules (via subprocess) with the given arguments.
+    """Call a fire-tracking module (via subprocess) with the given arguments.
 
     Args:
-        local_name: Name of the module to call (e.g. 'sentinel/sentinel_scene_cpu.py')
+        local_name: Name of the module to call (e.g. 'fire-tracking/run_pipe_incremental.py')
         work_dir: Directory to run the module in
         args: List of arguments to pass to the module
     """
