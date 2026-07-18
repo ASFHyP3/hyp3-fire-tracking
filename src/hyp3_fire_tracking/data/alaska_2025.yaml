@@ -9,8 +9,8 @@
 # ============================================================================
 
 # --- Root variables (only these two need changing per machine) ---
-raw_root:    ./output
-output_root: ./output
+raw_root:    ../output
+output_root: ../output
 
 # --- Input ---
 # Source root: all VIIRS inputs live under this tree
