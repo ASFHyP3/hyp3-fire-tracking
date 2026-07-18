@@ -15,4 +15,4 @@ jobs:
       user: username_for_github_actions
       email: email_for@github_actions.com
     secrets:
-      USER_TOKEN: ${{ secrets.USERNAME_FOR_GITHUB_ACTIONS_PAK }}
+      USER_TOKEN: ${{ secrets.TOOLS_BOT_PAK }}
