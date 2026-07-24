@@ -19,6 +19,7 @@ dependencies:
   - netCDF4
   - numpy
   - omegaconf
+  - opencv
   - pandas
   - plotly
   - pyarrow
