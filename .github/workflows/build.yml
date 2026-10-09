@@ -53,14 +53,6 @@ jobs:
           role-to-assume: ${{ vars.OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ vars.CF_ROLE_ARN }}
-          role-chaining: true
-          role-skip-session-tagging: true
-
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
