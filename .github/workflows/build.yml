@@ -14,8 +14,6 @@ on:
 env:
   HYP3_REGISTRY: 761639967505.dkr.ecr.us-west-2.amazonaws.com
   AWS_REGION: us-west-2
-  AWS_ACCESS_KEY_ID: ${{ secrets.AKFIRE_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AKFIRE_AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   call-version-info-workflow:
@@ -28,6 +26,9 @@ jobs:
 
   dockerize:
     needs: call-version-info-workflow
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ needs.call-version-info-workflow.outputs.version_tag }}
@@ -49,14 +50,13 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Fetch GAMMA
+      - name: Fetch AK-fire
         run: |
           aws s3 cp s3://fire-tracking/AK_fire-main.zip .
           unzip AK_fire-main.zip
