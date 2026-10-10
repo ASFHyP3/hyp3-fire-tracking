@@ -44,5 +44,10 @@ RUN mamba env create -f /hyp3-fire-tracking/environment.yml && \
     sed -i 's/conda activate base/conda activate hyp3-fire-tracking/g' /home/conda/.profile && \
     python -m pip install --no-cache-dir /hyp3-fire-tracking
 
+COPY AK_fire-main /hyp3-fire-tracking/
+COPY ./src/hyp3_fire_tracking/data/alaska_2025.yaml /hyp3-fire-tracking/AK_fire-main/fire-tracking/conf/paths/
+
+ENV PROC_HOME=/hyp3-fire-tracking/AK_fire-main/fire-tracking
+
 ENTRYPOINT ["/hyp3-fire-tracking/src/hyp3_fire_tracking/etc/entrypoint.sh"]
 CMD ["-h"]

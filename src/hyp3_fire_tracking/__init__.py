@@ -1,4 +1,4 @@
-"""Plugin to draw fire polygon from fire detections"""
+"""Plugin to draw fire polygon from fire detections."""
 
 from importlib.metadata import version
 
